@@ -1,0 +1,58 @@
+version: '3.9'
+name: docker-workshop-stack
+services:
+  nodejs:
+    container_name: node-js-app-container_name
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - url=mongodb://root:example@mongodb:27017/
+    ports:
+      - '3001:3000'
+    depends_on:
+      - mongodb
+    networks:
+     - nodejs-network 
+  mongodb:
+    container_name: mongodb 
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+     - '5000:27017'
+    networks:
+     - nodejs-network
+  nodejs-2:
+    container_name: node-js2-container
+    restart: always
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      - url=mongodb://root:example@mongodb2:27017/
+    ports:
+      - '3001:3000'
+    depends_on:
+      - mongodb
+    networks:
+     - telecom
+  mongodb2:
+    container_name: mongodb-2
+    image: mongo
+    restart: always
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+    ports:
+     - '5000:27017'
+    networks:
+     - telecom  
+networks:
+  nodejs-network:
+   driver: bridge
+  telecom:
+   driver: bridge
